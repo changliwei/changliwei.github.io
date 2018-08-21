@@ -6,7 +6,7 @@ tags: partition start sector
 ---
 
 
-# vdb or vdb1 how to find file system partition start sector ?
+
 
 There are some issues in kvm public cloud virtual machines, for incorrect partition table or file system corruption, which leads to the disk can not be mounted or the host will be not booted and entered into rescue model.  The root case is always misconfiguration of fstab,  bewildered with vdb or vdb1。 This article will give a general method to solve it.
 
@@ -54,7 +54,7 @@ sector = 512 bytes
 
 **For the special case of block group 0**, the first 1024 bytes are unused, to allow for the installation of x86 boot sectors and other oddities. The superblock will start at offset 1024 bytes, whichever block that happens to be (usually 0). However, if for some reason the block size = 1024, then block 0 is marked in use and the superblock goes in block 1.** For all other block groups, there is no padding.**
 '''
-通过这句话可以，市面上或者网络上的磁盘数据结构都忽略了第0个group的前1024B，预留这里也懒得重新绘图了。
+通过这句话可以，市面上或者网络上的磁盘数据结构都忽略了第0个group的前1024B预留,这里也懒得重新绘图了。
 
 ## 超级块数据结构
 Total size is 1024 bytes. 很长自行查看，这里关注特征码，magic相对Magic signature位置。
