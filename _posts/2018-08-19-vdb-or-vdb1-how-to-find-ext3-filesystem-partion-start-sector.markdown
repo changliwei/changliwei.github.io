@@ -32,7 +32,7 @@ sector = 512 bytes
 2048 sector * 512 bytes/sectors = 1 * 1024 * 1024 bytes = 1MiB
 ``` 
 
-从winhex直接查看磁盘或者fdisk查看可以知道**磁盘分区前有1MiB空间**。这1MiB的空间，除了前512MiB的MBR，剩余是0填充的。
+从winhex直接查看磁盘或者fdisk查看可以知道**磁盘分区前有1MiB空间**。这1MiB的空间，除了前512B的MBR，剩余是0填充的。
 ![image]({{site.baseurl}}/assets/img/0819/ubuntu.jpg)
 
 
@@ -48,13 +48,13 @@ sector = 512 bytes
 ## Ext3 磁盘数据结构
 ![image]({{site.baseurl}}/assets/img/0819/disk_data_structure.jpg)
 
-这里先看第0个Block group，因为我们要分析分区引导位置，所以从第一个开始。
+先看第0个Block group，因为要分析分区引导位置，所以从第一个开始。
 根据ext4文件系统数据格式（https://ext4.wiki.kernel.org/index.php/Ext4_Disk_Layout）知道（同样适合ext3）, 第0个block group中开头存在1024B的预留用来安装x86的引导和填充。具体可以见：
 '''
 
 **For the special case of block group 0**, the first 1024 bytes are unused, to allow for the installation of x86 boot sectors and other oddities. The superblock will start at offset 1024 bytes, whichever block that happens to be (usually 0). However, if for some reason the block size = 1024, then block 0 is marked in use and the superblock goes in block 1.** For all other block groups, there is no padding.**
 '''
-通过这句话可以，市面上或者网络上的磁盘数据结构都忽略了第0个group的前1024B预留,这里也懒得重新绘图了。
+通过这句话可以发现网络上的磁盘数据结构大多都忽略了第0个group的前1024B预留,这里也懒得重新绘图了。
 
 ## 超级块数据结构
 Total size is 1024 bytes. 很长自行查看，这里关注特征码，magic相对Magic signature位置。
