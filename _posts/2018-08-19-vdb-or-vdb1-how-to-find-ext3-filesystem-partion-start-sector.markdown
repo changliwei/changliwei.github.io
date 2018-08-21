@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 这个是标题
+title: vdb or vdb1 how to find file system partition start sector 
 date: 2018-08-19 10:00:00.000000000 +08:00
 tags: partition start sector
 ---
@@ -18,11 +18,11 @@ There are some issues in kvm public cloud virtual machines, for incorrect partit
 ### ubuntu默认分区开始Sector是2048
 #### winhex下的磁盘分区结构
 
-![image](assets/img/0819/disk_structure.jpg)
+![image]({{site.baseurl}}/assets/img/0819/disk_structure.jpg)
 
 可以看到一个Linux下的文件系统分区前存在1MiB的空间。
 #### 对应fdisk下查看关系
-![image](assets/img/0819/disk_structure1.jpg)
+![image]({{site.baseurl}}/assets/img/0819/disk_structure1.jpg)
 
 可以计算一下
 
@@ -33,7 +33,7 @@ sector = 512 bytes
 ``` 
 
 从winhex直接查看磁盘或者fdisk查看可以知道**磁盘分区前有1MiB空间**。这1MiB的空间，除了前512MiB的MBR，剩余是0填充的。
-![image](assets/img/0819/ubuntu.jpg)
+![image]({{site.baseurl}}/assets/img/0819/ubuntu.jpg)
 
 
 ### CentOS默认分区开始Sector是63
@@ -43,10 +43,10 @@ sector = 512 bytes
 
 - 0-1 sector为MBR
 - 2-63 sector为0填充 
-![image](assets/img/0819/centos.jpg)
+![image]({{site.baseurl}}/assets/img/0819/centos.jpg)
 
 ## Ext3 磁盘数据结构
-![image](assets/img/0819/disk_data_structure.jpg)
+![image]({{site.baseurl}}/assets/img/0819/disk_data_structure.jpg)
 
 这里先看第0个Block group，因为我们要分析分区引导位置，所以从第一个开始。
 根据ext4文件系统数据格式（https://ext4.wiki.kernel.org/index.php/Ext4_Disk_Layout）知道（同样适合ext3）, 第0个block group中开头存在1024B的预留用来安装x86的引导和填充。具体可以见：
@@ -59,13 +59,13 @@ sector = 512 bytes
 ## 超级块数据结构
 Total size is 1024 bytes. 很长自行查看，这里关注特征码，magic相对Magic signature位置。
 
-![image](assets/img/0819/magic.jpg)
+![image]({{site.baseurl}}/assets/img/0819/magic.jpg)
 
 
 ### ubuntu Magic signature位置计算
 
 
-![image](assets/img/0819/ubuntu_magic.jpg)
+![image]({{site.baseurl}}/assets/img/0819/ubuntu_magic.jpg)
 
 根据之前分析
 
@@ -79,7 +79,7 @@ Total size is 1024 bytes. 很长自行查看，这里关注特征码，magic相�
 
 
 ### CentOS Magic signature位置计算
-![image](assets/img/0819/centos_magic.jpg)
+![image]({{site.baseurl}}/assets/img/0819/centos_magic.jpg)
 
 
 63磁盘头引导Sector + group 0开头2个Sector填充 + 0超级块Magic Signature偏移 438
@@ -100,11 +100,11 @@ P.S.这里为了数据安全匹配的时候使用了：ef53 000
 
 ## CentOS上的一个分区开始位置计算题
 
-![image](assets/img/0819/probems.jpg)
+![image]({{site.baseurl}}/assets/img/0819/probems.jpg)
 
 如何计算/dev/vdb1的分区开始位置是1234？
 
-![image](assets/img/0819/answer.png)
+![image]({{site.baseurl}}/assets/img/0819/answer.png)
 
 0x009a830-0x00430 = 0x0091400 (hexdump计算的16进制，这里使用)
 
@@ -115,11 +115,11 @@ P.S.这里为了数据安全匹配的时候使用了：ef53 000
 ## 最后一个问题vdb和vdb1的问题
 对于直接整体格式化的磁盘，实际上是没有分区表的，不建议这么使用磁盘，在扩容或者其他情况下问题比较多不直观，不建议这么使用。
 
-![image](assets/img/0819/entire.jpg)
+![image]({{site.baseurl}}/assets/img/0819/entire.jpg)
 
 这里赫然有提示，是个整体的磁盘，不是分区，当然也就没有分区表，继续hexdump可见。
 
-![image](assets/img/0819/entrie2.jpg)
+![image]({{site.baseurl}}/assets/img/0819/entrie2.jpg)
 
 这里直接grep到的位置就是0x438,完全没有包括计算分区表位置。
 
